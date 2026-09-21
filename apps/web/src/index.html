@@ -2,9 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Web</title>
+    <title>Barista — Java class diagram generator</title>
     <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Upload a zip of Java sources and get a UML class diagram. Static analysis, no AI, and nothing leaves your browser."
+    />
+    <!-- viewport-fit=cover keeps the layout under the notch on iOS, where the
+         diagram canvas is meant to reach the edges of the screen. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- Two values so the browser chrome follows the app's own light and dark
+         surfaces rather than sitting on a mismatched bar. -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f5" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#151517" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>
   <body>
