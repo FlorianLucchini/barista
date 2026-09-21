@@ -1,0 +1,46 @@
+{
+  "name": "@barista/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Barista's Angular interface: upload, diagram rendering and interaction.",
+  "license": "MIT",
+  "scripts": {
+    "ng": "ng",
+    "dev": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "test:coverage": "ng test --coverage",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.spec.json",
+    "e2e": "node -e \"console.log('E2E suite not wired yet — see docs/internal/roadmap.md')\""
+  },
+  "dependencies": {
+    "@angular/common": "^22.1.0",
+    "@angular/compiler": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0",
+    "@angular/platform-browser": "^22.1.0",
+    "@angular/router": "^22.1.0",
+    "@barista/core": "workspace:*",
+    "d3-zoom": "^3.0.0",
+    "elkjs": "^0.12.0",
+    "fflate": "^0.8.3",
+    "motion": "^13.4.0",
+    "rxjs": "~7.8.0",
+    "tree-sitter-java": "^0.23.5",
+    "tslib": "^2.3.0",
+    "web-tree-sitter": "^0.27.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.1.8",
+    "@angular/cli": "^22.1.8",
+    "@angular/compiler-cli": "^22.1.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/d3-zoom": "^3.0.8",
+    "@vitest/coverage-v8": "^4.0.8",
+    "jsdom": "^28.0.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.3",
+    "vitest": "^4.0.8"
+  }
+}

@@ -1,0 +1,37 @@
+# Local preview of the production build.
+#
+#   docker compose up --build     →  http://localhost:4300
+#
+# This serves the built static site exactly as deployment does, which makes it
+# the right place to check things the dev server hides: base href handling,
+# cache headers, and whether the tree-sitter .wasm files load with the correct
+# MIME type.
+#
+# For day-to-day development use `pnpm dev` instead — it has hot reload, which
+# this deliberately does not.
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Root path, matching a local preview rather than the GitHub Pages
+        # project subpath.
+        BARISTA_BASE_HREF: /
+        BARISTA_BUILD_LABEL: docker-local
+    image: barista:local
+    container_name: barista-preview
+    ports:
+      # 4300 to stay clear of the Angular dev server on 4200.
+      - '4300:8080'
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      # nginx needs somewhere writable for its temporary files once the root
+      # filesystem is read-only.
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
+    security_opt:
+      - no-new-privileges:true

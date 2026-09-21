@@ -1,0 +1,97 @@
+name: Bug report
+description: Something Barista got wrong — a bad diagram, a wrong relationship, a crash.
+labels: [bug]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The single most useful thing you can provide is a **minimal Java snippet
+        that reproduces the problem**. Barista is deterministic: the same source
+        always produces the same model, so a snippet turns a bug report into a
+        regression test in one step.
+
+        Barista runs entirely in your browser, so nothing was uploaded anywhere
+        and there are no server logs to consult. What you paste here is all the
+        information there is.
+
+  - type: textarea
+    id: java
+    attributes:
+      label: Minimal Java that reproduces it
+      description: >
+        The smallest set of classes that still shows the problem. Include the
+        `package` declarations and `import` statements — type resolution depends
+        on them, and a bug that looks like bad inference is often a resolution
+        problem instead.
+      render: java
+      placeholder: |
+        package com.example.orders;
+
+        import com.example.billing.Invoice;
+
+        public class Order {
+            private final List<Invoice> invoices = new ArrayList<>();
+        }
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: >
+        For a wrong relationship, name the UML relationship you expected and
+        why — for example "aggregation, because the list is assigned from a
+        constructor parameter".
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead
+      description: >
+        If Barista showed evidence for the relationship it chose, paste it. That
+        evidence is the tool explaining its reasoning, and it usually points
+        straight at the faulty rule.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Which stage looks wrong, if you can tell
+      description: Leave as "not sure" if it is not obvious. It often is not.
+      options:
+        - Not sure
+        - Reading the zip
+        - Parsing the Java
+        - Resolving types (wrong class matched, or type not found)
+        - Inferring relationships (wrong kind, or missing edge)
+        - Diagram layout or rendering
+        - Export (Mermaid, PlantUML, SVG, PNG)
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Firefox 142, Chrome 141, Safari 18.2
+    validations:
+      required: true
+
+  - type: input
+    id: build
+    attributes:
+      label: Build label
+      description: Shown in the app footer. Tells us exactly which commit you hit this on.
+      placeholder: 3f8a9c1 or "local"
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors
+      description: Anything red in the browser devtools console. Optional.
+      render: text

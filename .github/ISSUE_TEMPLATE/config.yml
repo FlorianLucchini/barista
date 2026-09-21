@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Design principles and conventions
+    url: https://github.com/FlorianLucchini/barista/blob/main/.claude/rules/design-principles.md
+    about: The principles this codebase follows, before proposing a change to how it is written.
+  - name: Architecture decisions
+    url: https://github.com/FlorianLucchini/barista/tree/main/docs/adr
+    about: Why the project is built this way — read these before proposing an architectural change.

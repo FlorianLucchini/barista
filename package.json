@@ -1,0 +1,51 @@
+{
+  "name": "barista",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A browser-based toolkit for inspecting Java code. Everything runs client-side: your source never leaves your machine.",
+  "license": "MIT",
+  "author": "Florian Lucchini <florian.lucchini.ar@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlorianLucchini/barista.git"
+  },
+  "engines": {
+    "node": ">=24.15.0",
+    "pnpm": ">=10"
+  },
+  "packageManager": "pnpm@10.24.0",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @barista/web dev",
+    "build": "pnpm --filter @barista/core build && pnpm --filter @barista/web build",
+    "test": "pnpm -r test",
+    "test:watch": "pnpm --filter @barista/core test:watch",
+    "test:coverage": "pnpm -r test:coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r typecheck",
+    "deps:check": "depcruise packages apps --config .dependency-cruiser.cjs",
+    "deps:graph": "depcruise packages apps --config .dependency-cruiser.cjs --output-type dot | dot -T svg > docs/internal/dependency-graph.svg",
+    "principles:ledger": "node .claude/scripts/principles-ledger.mjs",
+    "e2e": "pnpm --filter @barista/web e2e",
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm deps:check && pnpm test"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "unrs-resolver",
+      "esbuild"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "dependency-cruiser": "^18.4.0",
+    "eslint": "^10.11.0",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-import-x": "^4.17.1",
+    "prettier": "^3.9.8",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.70.0"
+  }
+}

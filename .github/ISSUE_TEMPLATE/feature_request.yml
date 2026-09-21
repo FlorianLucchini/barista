@@ -1,0 +1,67 @@
+name: Feature request
+description: Propose a new tool for the toolkit, or an improvement to an existing one.
+labels: [enhancement]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Barista is a personal toolkit with a deliberately narrow scope, and it
+        follows YAGNI seriously: features get built when there is a real need
+        behind them, not because they would be possible. A concrete problem you
+        actually hit makes a much stronger case than a capability that sounds
+        useful in the abstract.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: >
+        What were you trying to do when this came up? Describe the situation,
+        not the solution you have in mind.
+      placeholder: >
+        I wanted to check whether my TP's model package had any dependency on
+        the view package, and I had to read every import by hand.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you have in mind
+      description: How you picture it working. Rough is fine.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - A new tool in the toolkit
+        - An improvement to the class diagram generator
+        - A new export format
+        - Developer experience or documentation
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you tried or considered instead
+      description: >
+        Existing tools, manual workarounds, other approaches. If something else
+        already solves this well, that is worth knowing — it may be the answer.
+
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints this has to respect
+      description: >
+        These are architectural commitments, not preferences. A proposal that
+        breaks one needs a strong argument. See docs/adr/.
+      options:
+        - label: Works without a backend — no source code leaves the browser.
+        - label: Analysis stays deterministic — static analysis, no AI in the pipeline.
+        - label: Can explain its reasoning, rather than asking to be trusted.

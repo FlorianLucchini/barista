@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# A new push to a branch makes the previous run obsolete. Cancel it rather than
+# paying for both.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+
+      # node-version-file keeps this in step with .nvmrc, so the Node version is
+      # declared once and CI cannot drift from local development.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # `pnpm verify` is format:check → lint → typecheck → deps:check → test.
+      # It is the same command used locally, so a green CI means the same thing
+      # as a green terminal. Keeping it as one script is deliberate: splitting
+      # it into separate steps here would let the two definitions diverge.
+      - name: Verify
+        run: pnpm verify
+
+      # Not part of `pnpm verify` because a malformed exception block should
+      # fail review, not the main quality gate. It still runs on every commit so
+      # the ledger cannot quietly rot.
+      - name: Check principle exception ledger
+        run: pnpm principles:ledger
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: verify
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+        env:
+          BARISTA_BASE_HREF: /
+          BARISTA_BUILD_LABEL: ${{ github.sha }}
+
+# End-to-end tests are deliberately absent from this workflow.
+#
+# `pnpm e2e` exists as a script, but no Playwright specs have been written yet
+# and apps/web has no e2e target. A job that runs a suite of zero tests reports
+# green while proving nothing, which is worse than an obvious gap — so the gap
+# stays obvious.
+#
+# To enable it: add Playwright and specs under apps/web, then add a job that
+# installs browsers with `pnpm exec playwright install --with-deps chromium`
+# and runs `pnpm e2e`. Tracked in docs/internal/roadmap.md, phase 3.

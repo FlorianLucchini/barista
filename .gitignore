@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+out-tsc/
+*.tsbuildinfo
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Angular
+.angular/
+
+# CodeGraph index (local, rebuildable — see docs/internal/codegraph.md)
+.codegraph/
+
+# Claude Code local overrides (personal, not shared)
+.claude/settings.local.json
+
+# Scratch space for local experiments
+scratch/
+tmp/

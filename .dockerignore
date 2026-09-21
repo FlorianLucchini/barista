@@ -1,0 +1,51 @@
+# Keep the build context small. Everything here is either reproducible inside
+# the image, irrelevant to it, or actively harmful to copy in.
+
+# Reinstalled in the image from the lockfile.
+node_modules/
+**/node_modules/
+.pnpm-store/
+
+# Rebuilt in the image.
+dist/
+**/dist/
+out-tsc/
+**/out-tsc/
+.angular/
+**/.angular/
+*.tsbuildinfo
+
+# Test output.
+coverage/
+**/coverage/
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+# History and tooling metadata.
+.git/
+.github/
+.gitignore
+.codegraph/
+
+# Local secrets and overrides. .env.example holds no secrets, but nothing in
+# this family belongs in an image layer.
+.env
+.env.*
+.claude/settings.local.json
+
+# Editors and OS noise.
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Documentation does not affect the built site.
+docs/
+*.md
+
+# Local scratch space.
+scratch/
+tmp/

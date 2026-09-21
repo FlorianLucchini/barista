@@ -1,0 +1,103 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time. cancel-in-progress stays false on purpose: cancelling
+# a deploy midway can leave Pages serving a half-published site.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Pages serves this repository at /barista/, so every asset URL has to be
+      # prefixed. Getting this wrong produces a blank page with 404s in the
+      # console and no other symptom.
+      - name: Build
+        run: pnpm build
+        env:
+          BARISTA_BASE_HREF: /barista/
+          BARISTA_BUILD_LABEL: ${{ github.sha }}
+
+      # Angular's output path follows its project configuration. Resolve it from
+      # the build output rather than hardcoding a path that breaks on a rename.
+      - name: Locate build output
+        id: site
+        run: |
+          set -euo pipefail
+          index="$(find apps/web/dist -name index.html -print -quit || true)"
+          if [ -z "$index" ]; then
+            echo "::error::Build produced no index.html under apps/web/dist"
+            exit 1
+          fi
+          echo "path=$(dirname "$index")" >> "$GITHUB_OUTPUT"
+          echo "Resolved site directory: $(dirname "$index")"
+
+      # A wrong base href is silent at build time and fatal at runtime, so check
+      # it here rather than discovering it from a blank page after deployment.
+      - name: Verify base href
+        run: |
+          set -euo pipefail
+          index="${{ steps.site.outputs.path }}/index.html"
+          if ! grep -qE '<base[^>]+href="/barista/"' "$index"; then
+            echo "::error::index.html does not carry <base href=\"/barista/\">."
+            echo "The web build must honour the BARISTA_BASE_HREF environment variable."
+            grep -oE '<base[^>]*>' "$index" || echo "No <base> tag found at all."
+            exit 1
+          fi
+
+      # Without this, Pages runs the output through Jekyll, which silently drops
+      # files and directories whose names begin with an underscore.
+      - name: Disable Jekyll processing
+        run: touch "${{ steps.site.outputs.path }}/.nojekyll"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ steps.site.outputs.path }}
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
